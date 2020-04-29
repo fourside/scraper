@@ -2,6 +2,8 @@ const chromium = require('chrome-aws-lambda');
 const puppeteer = require('puppeteer-core');
 const fs = require('fs');
 const path = require('path');
+const cliProgress = require('cli-progress');
+const _colors = require('colors');
 
 const DIR = process.argv[2];
 if (DIR === undefined) {
@@ -15,28 +17,37 @@ if (TARGET_URL === undefined) {
   return;
 }
 
+const progressBar = new cliProgress.SingleBar({}, {
+    format: _colors.grey(' {bar}') + ' {percentage}% | {value}/{total}',
+    barCompleteChar: '\u2588',
+    barIncompleteChar: '\u2591',
+    hideCursor: true,
+});
+
 const scrape = async () => {
   let browser;
-  let currentPage;
   let totalPage;
   let page;
   try {
     browser = await puppeteer.launch({
       args: chromium.args,
       defaultViewport: chromium.defaultViewport,
-      executablePath: await chromium.executablePath,
+      //executablePath: await chromium.executablePath,
+      executablePath: 'C:\\Program Files\ (x86)\\Google\\Chrome\\Application\\Chrome.exe',
       headless: chromium.headless,
     });
 
     page = await browser.newPage();
     await page.goto(TARGET_URL, { waitUntil: "domcontentloaded" });
 
+    const pager = await page.$$('#i2 div div span');
+    totalPage = await (await pager[1].getProperty('textContent')).jsonValue();
+    progressBar.start(totalPage, 0);
+
     const isNotEnd = async () => {
       const pager = await page.$$('#i2 div div span');
-      currentPage = await (await pager[0].getProperty('textContent')).jsonValue();
-      if (!totalPage) {
-        totalPage = await (await pager[1].getProperty('textContent')).jsonValue();
-      }
+      const currentPage = await (await pager[0].getProperty('textContent')).jsonValue();
+      progressBar.update(currentPage*1);
       return currentPage !== totalPage;
     };
 
@@ -60,15 +71,15 @@ const scrape = async () => {
       await page.waitFor(500); // interval
     } while (await isNotEnd());
 
-    console.log("DONE");
+    console.log("\nDONE");
   } catch (err) {
     console.log(err);
-    console.log("currentPage: ", currentPage);
-    console.log("next command: ", `node ${path.basename(__filename)} ${DIR} ${page.url()}`);
+    console.log("next command:", `node ${path.basename(__filename)} ${DIR} ${page.url()}`);
   } finally {
     if (browser !== null) {
       await browser.close();
     }
+    progressBar.stop();
   }
 };
 
