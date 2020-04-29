@@ -26,14 +26,12 @@ const progressBar = new cliProgress.SingleBar({}, {
 
 const scrape = async () => {
   let browser;
-  let totalPage;
   let page;
   try {
     browser = await puppeteer.launch({
       args: chromium.args,
       defaultViewport: chromium.defaultViewport,
-      //executablePath: await chromium.executablePath,
-      executablePath: 'C:\\Program Files\ (x86)\\Google\\Chrome\\Application\\Chrome.exe',
+      executablePath: await chromium.executablePath,
       headless: chromium.headless,
     });
 
@@ -41,7 +39,7 @@ const scrape = async () => {
     await page.goto(TARGET_URL, { waitUntil: "domcontentloaded" });
 
     const pager = await page.$$('#i2 div div span');
-    totalPage = await (await pager[1].getProperty('textContent')).jsonValue();
+    const totalPage = await (await pager[1].getProperty('textContent')).jsonValue();
     progressBar.start(totalPage, 0);
 
     const isNotEnd = async () => {
