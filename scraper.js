@@ -1,4 +1,3 @@
-const chromium = require('chrome-aws-lambda');
 const puppeteer = require('puppeteer-core');
 const fs = require('fs');
 const path = require('path');
@@ -29,10 +28,8 @@ const scrape = async () => {
   let page;
   try {
     browser = await puppeteer.launch({
-      args: chromium.args,
-      defaultViewport: chromium.defaultViewport,
-      executablePath: await chromium.executablePath,
-      headless: chromium.headless,
+      executablePath: process.env.CHROME_PATH,
+      headless: true,
     });
 
     page = await browser.newPage();
@@ -72,7 +69,7 @@ const scrape = async () => {
     console.log("\nDONE");
   } catch (err) {
     console.log(err);
-    console.log("next command:", `node ${path.basename(__filename)} ${DIR} ${page.url()}`);
+    console.log("next command:", `node -r dotenv/config ${path.basename(__filename)} ${DIR} ${page.url()}`);
   } finally {
     if (browser !== null) {
       await browser.close();
