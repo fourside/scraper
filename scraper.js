@@ -21,6 +21,11 @@ program
   .parse(process.argv)
   ;
 
+if (!process.env.CHROME_PATH) {
+  console.log("pass option: '-r dotent/config' or pass the right path of chrome in .env");
+  process.exit(-1);
+}
+
 const progressBar = new cliProgress.SingleBar({}, {
     format: _colors.grey(' {bar}') + ' {percentage}% | {value}/{total}',
     barCompleteChar: '\u2588',
