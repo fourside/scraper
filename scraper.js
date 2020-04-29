@@ -3,18 +3,23 @@ const fs = require('fs');
 const path = require('path');
 const cliProgress = require('cli-progress');
 const _colors = require('colors');
+const { program } = require('commander');
 
-const DIR = process.argv[2];
-if (DIR === undefined) {
-  console.log("pass the dir");
-  return;
-}
+let DIR;
+let TARGET_URL;
 
-const TARGET_URL = process.argv[3];
-if (TARGET_URL === undefined) {
-  console.log("pass the url");
-  return;
-}
+program
+  .version('1.0.0')
+  .arguments('<dir> <targetUrl>')
+  .action(function (dir, targetUrl) {
+    DIR = dir;
+    TARGET_URL = targetUrl;
+  })
+  .on("--help", () => {
+    console.log(`node -r dotenv/config ${path.basename(__filename)} {dir} {targetUrl}`)
+  })
+  .parse(process.argv)
+  ;
 
 const progressBar = new cliProgress.SingleBar({}, {
     format: _colors.grey(' {bar}') + ' {percentage}% | {value}/{total}',
