@@ -1,17 +1,8 @@
 const puppeteer = require('puppeteer-core');
 const fs = require('fs');
 const path = require('path');
-const cliProgress = require('cli-progress');
-const _colors = require('colors');
 
-const progressBar = new cliProgress.SingleBar({}, {
-    format: _colors.grey(' {bar}') + ' {percentage}% | {value}/{total}',
-    barCompleteChar: '\u2588',
-    barIncompleteChar: '\u2591',
-    hideCursor: true,
-});
-
-const scrape = async (dir, url) => {
+const scrape = async (dir, url, progressBar) => {
   let browser;
   let page;
   try {
@@ -26,7 +17,7 @@ const scrape = async (dir, url) => {
 
     const pager = await page.$$('#i2 div div span');
     const totalPage = await (await pager[1].getProperty('textContent')).jsonValue();
-    progressBar.start(totalPage, 0);
+    progressBar.setTotal(totalPage*1);
 
     const isNotEnd = async () => {
       const pager = await page.$$('#i2 div div span');
@@ -49,22 +40,39 @@ const scrape = async (dir, url) => {
       const buffer = await response.buffer();
       fs.writeFileSync(path.join(dir, found[1]), buffer);
 
+      await page.waitForSelector("#i3 a");
       await page.click("#i3 a");
       await page.waitFor("#i2 div div span");
 
       await page.waitFor(500); // interval
     } while (await isNotEnd());
 
-    console.log("\nDONE");
+    return true;
   } catch (err) {
-    console.log(err);
-    console.log("next command:", `node -r dotenv/config index.js ${dir} ${page.url()}`);
+    if (err.name === "TimeoutError") {
+      throw new RetryError(err, page.url());
+    } else {
+      console.log("next command:", `node -r dotenv/config index.js ${dir} ${page.url()}\n`);
+      throw err;
+    }
   } finally {
     if (browser !== null) {
       await browser.close();
     }
-    progressBar.stop();
   }
 };
 
-module.exports = { scrape };
+class RetryError extends Error {
+  constructor(err, nextUrl) {
+    super(err);
+    this.name = new.target.name;
+    this.nextUrl = nextUrl;
+  }
+
+  getNextUrl() {
+    return this.nextUrl;
+  }
+}
+
+module.exports = { scrape, RetryError };
+
