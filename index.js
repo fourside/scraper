@@ -50,8 +50,7 @@ const sleep = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
         console.log(err);
         throw err;
       }
-    } finally {
-      progressBar.stop();
     }
   }
+  progressBar.stop();
 })();
