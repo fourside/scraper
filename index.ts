@@ -1,15 +1,16 @@
-const { program } = require('commander');
-const cliProgress = require('cli-progress');
-const _colors = require('colors');
-const { scrape, RetryError } = require('./scraper');
+import path from 'path';
+import { program } from 'commander';
+import cliProgress from "cli-progress";
+import _colors from 'colors';
+import { scrape, RetryError } from './scraper';
 
-let targetDir;
-let targetUrl;
+let targetDir = "";
+let targetUrl = "";
 
 program
   .version('1.0.0')
   .arguments('<dir> <url>')
-  .action(function (dir, url) {
+  .action(function (dir: string, url: string) {
     targetDir = dir;
     targetUrl = url;
   })
@@ -24,7 +25,7 @@ if (!process.env.CHROME_PATH) {
   process.exit(-1);
 }
 
-const progressBar = new cliProgress.SingleBar({}, {
+const progressBar = new cliProgress.SingleBar({
     format: _colors.grey(' {bar}') + ' {percentage}% | {value}/{total}',
     barCompleteChar: '\u2588',
     barIncompleteChar: '\u2591',
@@ -32,7 +33,7 @@ const progressBar = new cliProgress.SingleBar({}, {
 });
 progressBar.start(100, 0);
 
-const sleep = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
+const sleep = (ms: number) => new Promise((resolve, reject) => setTimeout(resolve, ms));
 
 (async () => {
   while (true) {
