@@ -55,7 +55,7 @@ export const scrape = async (dir: string, url: string, progressBar: Bar) => {
     if (err.name === "TimeoutError" && page) {
       throw new RetryError(err, page.url());
     } else {
-      console.log("next command:", `node -r dotenv/config index.js ${dir} ${page?.url()}\n`);
+      console.log("next command:", `npm start -- ${dir} ${page?.url()}\n`);
       throw err;
     }
   } finally {

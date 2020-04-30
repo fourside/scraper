@@ -1,4 +1,3 @@
-import path from 'path';
 import { program } from 'commander';
 import cliProgress from "cli-progress";
 import _colors from 'colors';
@@ -15,7 +14,7 @@ program
     targetUrl = url;
   })
   .on("--help", () => {
-    console.log(`node -r dotenv/config ${path.basename(__filename)} {dir} {targetUrl}`)
+    console.log(`npm start -- {dir} {targetUrl}`)
   })
   .parse(process.argv)
   ;
