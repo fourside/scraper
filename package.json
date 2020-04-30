@@ -15,6 +15,9 @@
     "dotenv": "^8.2.0",
     "puppeteer-core": "^3.0.2"
   },
+  "engines": {
+    "node": "12.x"
+  },
   "devDependencies": {
     "@types/cli-progress": "^3.4.2",
     "@types/node": "^13.13.4",
