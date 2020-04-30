@@ -17,7 +17,9 @@ const scrape = async (dir, url, progressBar) => {
 
     const pager = await page.$$('#i2 div div span');
     const totalPage = await (await pager[1].getProperty('textContent')).jsonValue();
-    progressBar.setTotal(totalPage*1);
+    if (totalPage !== progressBar.getTotal()) {
+      progressBar.setTotal(totalPage*1);
+    }
 
     const isNotEnd = async () => {
       const pager = await page.$$('#i2 div div span');
