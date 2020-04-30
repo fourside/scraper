@@ -3,28 +3,6 @@ const fs = require('fs');
 const path = require('path');
 const cliProgress = require('cli-progress');
 const _colors = require('colors');
-const { program } = require('commander');
-
-let DIR;
-let TARGET_URL;
-
-program
-  .version('1.0.0')
-  .arguments('<dir> <targetUrl>')
-  .action(function (dir, targetUrl) {
-    DIR = dir;
-    TARGET_URL = targetUrl;
-  })
-  .on("--help", () => {
-    console.log(`node -r dotenv/config ${path.basename(__filename)} {dir} {targetUrl}`)
-  })
-  .parse(process.argv)
-  ;
-
-if (!process.env.CHROME_PATH) {
-  console.log("pass option: '-r dotent/config' or pass the right path of chrome in .env");
-  process.exit(-1);
-}
 
 const progressBar = new cliProgress.SingleBar({}, {
     format: _colors.grey(' {bar}') + ' {percentage}% | {value}/{total}',
@@ -33,7 +11,7 @@ const progressBar = new cliProgress.SingleBar({}, {
     hideCursor: true,
 });
 
-const scrape = async () => {
+const scrape = async (dir, url) => {
   let browser;
   let page;
   try {
@@ -44,7 +22,7 @@ const scrape = async () => {
     });
 
     page = await browser.newPage();
-    await page.goto(TARGET_URL, { waitUntil: "domcontentloaded" });
+    await page.goto(url, { waitUntil: "domcontentloaded" });
 
     const pager = await page.$$('#i2 div div span');
     const totalPage = await (await pager[1].getProperty('textContent')).jsonValue();
@@ -57,7 +35,7 @@ const scrape = async () => {
       return currentPage !== totalPage;
     };
 
-    fs.mkdir(DIR, (ignore) => {
+    fs.mkdir(dir, (ignore) => {
       // console.log(ignore)
     });
 
@@ -69,7 +47,7 @@ const scrape = async () => {
       });
       const found = response.url().match(/\/([^\/]+)$/);
       const buffer = await response.buffer();
-      fs.writeFileSync(path.join(DIR, found[1]), buffer);
+      fs.writeFileSync(path.join(dir, found[1]), buffer);
 
       await page.click("#i3 a");
       await page.waitFor("#i2 div div span");
@@ -80,7 +58,7 @@ const scrape = async () => {
     console.log("\nDONE");
   } catch (err) {
     console.log(err);
-    console.log("next command:", `node -r dotenv/config ${path.basename(__filename)} ${DIR} ${page.url()}`);
+    console.log("next command:", `node -r dotenv/config index.js ${dir} ${page.url()}`);
   } finally {
     if (browser !== null) {
       await browser.close();
@@ -89,7 +67,4 @@ const scrape = async () => {
   }
 };
 
-(async () => {
-  await scrape();
-})();
-
+module.exports = { scrape };
