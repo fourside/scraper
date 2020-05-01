@@ -1,9 +1,9 @@
 import puppeteer, { Browser, Page } from 'puppeteer-core';
 import fs from 'fs';
 import path from 'path';
-import { Bar } from "cli-progress";
+import { ProgressBar } from './progressbar';
 
-export const scrape = async (dir: string, url: string, progressBar: Bar) => {
+export const scrape = async (dir: string, url: string, progressBar: ProgressBar) => {
   let browser: Browser | undefined;
   let page: Page | undefined;
   try {
