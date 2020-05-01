@@ -1,6 +1,7 @@
 import { parse } from "./cliparser";
 import { progressBar } from './progressbar';
-import { scrape, RetryError } from './scraper';
+import { retry } from './retry';
+import { scrape } from './scraper';
 
 let { dir, url } = parse(process.argv);
 
@@ -9,26 +10,14 @@ if (!process.env.CHROME_PATH) {
   process.exit(-1);
 }
 
-const sleep = (ms: number) => new Promise((resolve, reject) => setTimeout(resolve, ms));
-
 (async () => {
   progressBar.start(100, 0);
-  while (true) {
-    try {
-      const done = await scrape(dir, url, progressBar);
-      if (done) {
-        console.log("\nDONE");
-        break;
-      }
-    } catch (err) {
-      if (err instanceof RetryError) {
-        url = err.getNextUrl();
-        await sleep(2000);
-      } else {
-        console.log(err);
-        throw err;
-      }
-    }
+  const proc = scrape;
+  const onSuccess = () => console.log("\DONE");
+  try {
+    await retry({ dir, url, progressBar, proc, onSuccess, });
+  } catch (err) {
+    console.log(err);
   }
   progressBar.stop();
 })();
