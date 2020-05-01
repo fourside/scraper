@@ -9,10 +9,23 @@ type RetryParams = {
   progressBar: ProgressBar;
   proc: (dir: string, url: string, progressBar: ProgressBar) => Promise<boolean>;
   onSuccess: () => void;
-  options?: {};
+  backoffOptions?: BackoffOptions;
 }
-export const retry = async ({ dir, url, progressBar, proc, onSuccess, options }: RetryParams) => {
-  while (true) {
+type BackoffOptions = {
+  limit: number;
+  minMs: number;
+  maxMs: number;
+}
+const defaultOptions = {
+  limit: 1000,
+  minMs: 2 * 100,
+  maxMs: 10 * 1000,
+};
+
+export const retry = async ({ dir, url, progressBar, proc, onSuccess, backoffOptions }: RetryParams) => {
+  let attempt = 0;
+  const options = Object.assign(defaultOptions, backoffOptions);
+  while (attempt++ < options.limit) {
     try {
       const done = await proc(dir, url, progressBar);
       if (done) {
@@ -22,11 +35,23 @@ export const retry = async ({ dir, url, progressBar, proc, onSuccess, options }:
     } catch (err) {
       if (err instanceof RetryError) {
         url = err.getNextUrl();
-        await sleep(2000);
+        const ms = addJitter(computeSleepMsec(options.minMs, options.maxMs, attempt));
+        await sleep(ms);
       } else {
         console.log(err);
         throw err;
       }
     }
   }
+};
+
+const computeSleepMsec = (base: number, cap: number, attempt: number) => {
+  const factor = 2;
+  const ms = base * Math.pow(factor, attempt);
+  return Math.min(cap, ms);
+};
+
+const addJitter = (msec: number) => {
+  const jitter = 0.5;
+  return msec + Math.floor(Math.random() * jitter * msec);
 };
