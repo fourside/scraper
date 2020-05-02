@@ -5,7 +5,7 @@
   "main": "index.ts",
   "scripts": {
     "start": "ts-node -r dotenv/config index.ts",
-    "test": "mocha --require ts-node/register *.spec.ts"
+    "test": "mocha"
   },
   "author": "",
   "license": "ISC",
