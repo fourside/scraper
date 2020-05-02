@@ -44,19 +44,19 @@ describe("retry", () => {
     assert.strictEqual(result, true);
   });
 
-  it("should be rejected when throws Error except RetryError", () => {
+  it("should be rejected when throws Error except RetryError", async () => {
     const proc = errorPromise;
-    assert.rejects(() => {
+    await assert.rejects(() => {
       return retry({ ...defaultParams, proc });
     }, { name: 'Error', message: "ordinal error" });
   });
 
-  it("should be rejected when attempt over limit", () => {
+  it("should be rejected when attempt over limit", async () => {
     const proc = retryErrorPromise;
     const backoffOptions = {
       limit: 3,
     };
-    assert.rejects(() => {
+    await assert.rejects(() => {
       return retry({ ...defaultParams, proc, backoffOptions });
     }, { name: "Error", message: "exceeded max retry [3]" });
   });
