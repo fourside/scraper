@@ -20,6 +20,8 @@ module.exports = {
     "@typescript-eslint"
   ],
   "rules": {
+    "no-unused-vars": "off",
+    "@typescript-eslint/no-unused-vars": "error",
     "semi": "error",
     "indent": ["error", 2, { "SwitchCase": 1 }],
     "quotes": ["error", "double"],
