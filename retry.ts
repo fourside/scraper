@@ -1,3 +1,4 @@
+import { format } from 'util';
 import { RetryError } from './scraper';
 import { ProgressBar } from './progressbar';
 
@@ -8,13 +9,12 @@ type RetryParams = {
   url: string;
   progressBar: ProgressBar;
   proc: (dir: string, url: string, progressBar: ProgressBar) => Promise<boolean>;
-  onSuccess: () => void;
   backoffOptions?: BackoffOptions;
 }
 type BackoffOptions = {
-  limit: number;
-  minMs: number;
-  maxMs: number;
+  limit?: number;
+  minMs?: number;
+  maxMs?: number;
 }
 const defaultOptions = {
   limit: 1000,
@@ -22,23 +22,24 @@ const defaultOptions = {
   maxMs: 10 * 1000,
 };
 
-export const retry = async ({ dir, url, progressBar, proc, onSuccess, backoffOptions }: RetryParams) => {
+export const retry = async ({ dir, url, progressBar, proc, backoffOptions }: RetryParams) => {
   let attempt = 0;
   const options = Object.assign(defaultOptions, backoffOptions);
   while (attempt++ < options.limit) {
     try {
       const done = await proc(dir, url, progressBar);
       if (done) {
-        onSuccess();
-        break;
+        return done;
       }
     } catch (err) {
       if (err instanceof RetryError) {
+        if (attempt >= options.limit) {
+          throw new Error(format("exceeded max retry [%s]", attempt));
+        }
         url = err.getNextUrl();
         const ms = addJitter(computeSleepMsec(options.minMs, options.maxMs, attempt));
         await sleep(ms);
       } else {
-        console.log(err);
         throw err;
       }
     }

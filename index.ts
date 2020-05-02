@@ -13,9 +13,9 @@ if (!process.env.CHROME_PATH) {
 (async () => {
   progressBar.start(100, 0);
   const proc = scrape;
-  const onSuccess = () => console.log("\DONE");
   try {
-    await retry({ dir, url, progressBar, proc, onSuccess, });
+    await retry({ dir, url, progressBar, proc });
+    console.log("\DONE");
   } catch (err) {
     console.log(err);
   }
