@@ -16,7 +16,9 @@ const errorPromise = (dir: string, url: string, bar: Bar) => {
 };
 
 describe("retry", () => {
-  const dir = "", url = "", progressBar = {} as Bar;
+  const defaultParams = {
+    dir: "", url: "", progressBar: {} as Bar,
+  };
 
   let count = 0;
   const until3TimesRetryError = (dir: string, url: string, bar: Bar) => {
@@ -38,14 +40,14 @@ describe("retry", () => {
     const backoffOptions = {
       limit: 4,
     };
-    const result = await retry({dir, url, progressBar, proc, backoffOptions});
+    const result = await retry({ ...defaultParams, proc, backoffOptions });
     assert.strictEqual(result, true);
   });
 
   it("should be rejected when throws Error except RetryError", () => {
     const proc = errorPromise;
     assert.rejects(() => {
-      return retry({dir, url, progressBar, proc});
+      return retry({ ...defaultParams, proc });
     }, { name: 'Error', message: "ordinal error" });
   });
 
@@ -55,7 +57,7 @@ describe("retry", () => {
       limit: 3,
     };
     assert.rejects(() => {
-      return retry({ dir, url, progressBar, proc, backoffOptions });
+      return retry({ ...defaultParams, proc, backoffOptions });
     }, { name: "Error", message: "exceeded max retry [3]" });
   });
 
