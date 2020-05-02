@@ -1,7 +1,7 @@
 import { parse } from "./cliparser";
-import { progressBar } from './progressbar';
-import { retry } from './retry';
-import { scrape } from './scraper';
+import { progressBar } from "./progressbar";
+import { retry } from "./retry";
+import { scrape } from "./scraper";
 
 let { dir, url } = parse(process.argv);
 
@@ -15,7 +15,7 @@ if (!process.env.CHROME_PATH) {
   const proc = scrape;
   try {
     await retry({ dir, url, progressBar, proc });
-    console.log("\DONE");
+    console.log("\nDONE");
   } catch (err) {
     console.log(err);
   }
