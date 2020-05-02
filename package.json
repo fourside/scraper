@@ -2,12 +2,12 @@
   "name": "scraper",
   "version": "1.0.0",
   "description": "",
-  "main": "index.ts",
+  "main": "src/index.ts",
   "scripts": {
-    "start": "ts-node -r dotenv/config index.ts",
+    "start": "ts-node -r dotenv/config src/index.ts",
     "test": "mocha",
     "tw": "mocha -w",
-    "lint": "eslint *.ts",
+    "lint": "eslint src/*.ts",
     "precommit": "npm t && lint-staged"
   },
   "author": "",
