@@ -1,7 +1,7 @@
-import puppeteer, { Browser, Page } from 'puppeteer-core';
-import fs from 'fs';
-import path from 'path';
-import { ProgressBar } from './progressbar';
+import puppeteer, { Browser, Page } from "puppeteer-core";
+import fs from "fs";
+import path from "path";
+import { ProgressBar } from "./progressbar";
 
 export const scrape = async (dir: string, url: string, progressBar: ProgressBar) => {
   let browser: Browser | undefined;
@@ -16,15 +16,15 @@ export const scrape = async (dir: string, url: string, progressBar: ProgressBar)
     page = await browser.newPage();
     await page.goto(url, { waitUntil: "domcontentloaded" });
 
-    const pager = await page.$$('#i2 div div span');
-    const totalPage = await (await pager[1].getProperty('textContent')).jsonValue();
+    const pager = await page.$$("#i2 div div span");
+    const totalPage = await (await pager[1].getProperty("textContent")).jsonValue();
     if (totalPage !== progressBar.getTotal() && typeof totalPage === "string") {
       progressBar.setTotal(parseInt(totalPage));
     }
 
     const isNotEnd = async (page: Page) => {
-      const pager = await page.$$('#i2 div div span');
-      const currentPage = await (await pager[0].getProperty('textContent')).jsonValue();
+      const pager = await page.$$("#i2 div div span");
+      const currentPage = await (await pager[0].getProperty("textContent")).jsonValue();
       if (typeof currentPage === "string") {
         progressBar.update(parseInt(currentPage));
       }

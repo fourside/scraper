@@ -7,6 +7,7 @@
     "start": "ts-node -r dotenv/config index.ts",
     "test": "mocha",
     "tw": "mocha -w",
+    "lint": "eslint *.ts",
     "precommit": "npm t && lint-staged"
   },
   "author": "",
