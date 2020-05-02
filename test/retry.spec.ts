@@ -39,6 +39,8 @@ describe("retry", () => {
     const proc = until3TimesRetryError;
     const backoffOptions = {
       limit: 4,
+      minMs: 10,
+      maxMs: 50,
     };
     const result = await retry({ ...defaultParams, proc, backoffOptions });
     assert.strictEqual(result, true);
@@ -55,6 +57,8 @@ describe("retry", () => {
     const proc = retryErrorPromise;
     const backoffOptions = {
       limit: 3,
+      minMs: 10,
+      maxMs: 50,
     };
     await assert.rejects(() => {
       return retry({ ...defaultParams, proc, backoffOptions });
