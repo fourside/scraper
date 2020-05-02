@@ -6,7 +6,8 @@
   "scripts": {
     "start": "ts-node -r dotenv/config index.ts",
     "test": "mocha",
-    "tw": "mocha -w"
+    "tw": "mocha -w",
+    "precommit": "npm t && lint-staged"
   },
   "author": "",
   "license": "ISC",
@@ -21,8 +22,11 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "npm test"
+      "pre-commit": "npm run precommit"
     }
+  },
+  "lint-staged": {
+    "*.ts": ["eslint --fix"]
   },
   "devDependencies": {
     "@types/cli-progress": "^3.4.2",
@@ -33,6 +37,7 @@
     "@typescript-eslint/parser": "^2.30.0",
     "eslint": "^6.8.0",
     "husky": "^4.2.5",
+    "lint-staged": "^10.2.2",
     "mocha": "^7.1.2",
     "ts-node": "^8.9.1",
     "typescript": "^3.8.3"
