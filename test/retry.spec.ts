@@ -1,16 +1,16 @@
 import * as assert from "assert";
 import { retry } from "../retry";
-import { ProgressBar as Bar } from '../progressbar';
+import { ProgressBar as Bar } from "../progressbar";
 import { RetryError } from "../scraper";
 
-const retryErrorPromise = (dir: string, url: string, bar: Bar) => {
-  return new Promise<boolean>((resolve, reject) => {
+const retryErrorPromise = () => {
+  return new Promise<boolean>(() => {
     throw new RetryError("retry error", "dummy url");
   });
 };
 
-const errorPromise = (dir: string, url: string, bar: Bar) => {
-  return new Promise<boolean>((resolve, reject) => {
+const errorPromise = () => {
+  return new Promise<boolean>(() => {
     throw new Error("ordinal error");
   });
 };
@@ -21,8 +21,8 @@ describe("retry", () => {
   };
 
   let count = 0;
-  const until3TimesRetryError = (dir: string, url: string, bar: Bar) => {
-    return new Promise<boolean>((resolve, reject) => {
+  const until3TimesRetryError = () => {
+    return new Promise<boolean>((resolve) => {
       if (count++ > 2) {
         resolve(true);
       } else {
@@ -50,7 +50,7 @@ describe("retry", () => {
     const proc = errorPromise;
     await assert.rejects(() => {
       return retry({ ...defaultParams, proc });
-    }, { name: 'Error', message: "ordinal error" });
+    }, { name: "Error", message: "ordinal error" });
   });
 
   it("should be rejected when attempt over limit", async () => {

@@ -3,7 +3,7 @@ import { progressBar } from "./progressbar";
 import { retry } from "./retry";
 import { scrape } from "./scraper";
 
-let { dir, url } = parse(process.argv);
+const { dir, url } = parse(process.argv);
 
 if (!process.env.CHROME_PATH) {
   console.log("pass option: '-r dotent/config' or pass the right path of chrome in .env");

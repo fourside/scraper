@@ -1,8 +1,8 @@
-import { format } from 'util';
-import { RetryError } from './scraper';
-import { ProgressBar } from './progressbar';
+import { format } from "util";
+import { RetryError } from "./scraper";
+import { ProgressBar } from "./progressbar";
 
-const sleep = (ms: number) => new Promise((resolve, reject) => setTimeout(resolve, ms));
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 type RetryParams = {
   dir: string;
