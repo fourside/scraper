@@ -16,7 +16,8 @@
     "cli-progress": "^3.8.0",
     "commander": "^5.1.0",
     "dotenv": "^8.2.0",
-    "puppeteer-core": "^3.0.2"
+    "puppeteer-core": "^3.0.2",
+    "winston": "^3.2.1"
   },
   "engines": {
     "node": "12.x"
@@ -27,7 +28,9 @@
     }
   },
   "lint-staged": {
-    "*.ts": ["eslint --fix"]
+    "*.ts": [
+      "eslint --fix"
+    ]
   },
   "devDependencies": {
     "@types/cli-progress": "^3.4.2",
