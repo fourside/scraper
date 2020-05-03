@@ -3,7 +3,9 @@ import { progressBar } from "./progressbar";
 import { retry } from "./retry";
 import { scrape } from "./scraper";
 import { logger } from "./logger";
+import * as profiler from "./profiler";
 
+const start = profiler.start();
 const { dir, url } = parse(process.argv);
 
 if (!process.env.CHROME_PATH) {
@@ -22,5 +24,6 @@ if (!process.env.CHROME_PATH) {
     logger.error(err);
   }
   progressBar.stop();
-  logger.info("end");
+  const elapsed = profiler.end(start);
+  logger.info("end. [elapsed time: %s]", elapsed);
 })();
