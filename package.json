@@ -8,7 +8,7 @@
     "test": "mocha",
     "tw": "mocha -w",
     "lint": "eslint src/*.ts",
-    "precommit": "npm t && lint-staged"
+    "precommit": "tsc --noEmit && lint-staged"
   },
   "author": "",
   "license": "ISC",
@@ -24,7 +24,8 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "npm run precommit"
+      "pre-commit": "npm run precommit",
+      "pre-push": "npm t"
     }
   },
   "lint-staged": {
