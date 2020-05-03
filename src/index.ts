@@ -2,6 +2,7 @@ import { parse } from "./cliparser";
 import { progressBar } from "./progressbar";
 import { retry } from "./retry";
 import { scrape } from "./scraper";
+import { logger } from "./logger";
 
 const { dir, url } = parse(process.argv);
 
@@ -11,13 +12,15 @@ if (!process.env.CHROME_PATH) {
 }
 
 (async () => {
+  logger.info("start");
+  logger.info("passed args: [%s, %s]", dir, url);
   progressBar.start(100, 0);
   const proc = scrape;
   try {
     await retry({ dir, url, progressBar, proc });
-    console.log("\nDONE");
   } catch (err) {
-    console.log(err);
+    logger.error(err);
   }
   progressBar.stop();
+  logger.info("end");
 })();

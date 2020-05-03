@@ -1,6 +1,7 @@
 import { format } from "util";
 import { RetryError } from "./scraper";
 import { ProgressBar } from "./progressbar";
+import { fileLogger as logger } from "./logger";
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -38,6 +39,7 @@ export const retry = async ({ dir, url, progressBar, proc, backoffOptions }: Ret
         }
         url = err.getNextUrl();
         const ms = addJitter(computeSleepMsec(options.minMs, options.maxMs, attempt));
+        logger.info("retry [attempt: %s, nexturl: %s, wait ms: %s]", attempt, url, ms);
         await sleep(ms);
       } else {
         throw err;
