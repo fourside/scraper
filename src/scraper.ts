@@ -6,7 +6,7 @@ import { fileLogger as logger } from "./logger";
 export const scrape = async (dir: string, url: string, progressBar: ProgressBar) => {
   let pageObject: PageObject | undefined;
   try {
-    pageObject = await launch();
+    pageObject = await launch(dir);
     await pageObject.goto(url);
 
     const totalPage = await pageObject.getTotalPage();
@@ -15,7 +15,6 @@ export const scrape = async (dir: string, url: string, progressBar: ProgressBar)
     }
     let currentPage = 0;
     do {
-      await pageObject.saveMedia(dir);
       currentPage = await pageObject.getCurrentPage();
       progressBar.update(currentPage);
       logger.debug("current: [%s / %s at %s]", currentPage, totalPage, pageObject.url());
