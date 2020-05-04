@@ -1,7 +1,7 @@
 import * as assert from "assert";
 import { retry } from "../src/retry";
 import { ProgressBar as Bar } from "../src/progressbar";
-import { RetryError } from "../src/scraper";
+import { RetryError } from "../src/RetryError";
 
 const retryErrorPromise = () => {
   return new Promise<boolean>(() => {

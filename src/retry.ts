@@ -1,7 +1,7 @@
 import { format } from "util";
-import { RetryError } from "./scraper";
 import { ProgressBar } from "./progressbar";
 import { fileLogger as logger } from "./logger";
+import { RetryError } from "./RetryError";
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 

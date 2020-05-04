@@ -1,3 +1,4 @@
+import fs from "fs";
 import { parse } from "./cliparser";
 import { progressBar } from "./progressbar";
 import { retry } from "./retry";
@@ -19,6 +20,7 @@ if (!process.env.CHROME_PATH) {
   progressBar.start(100, 0);
   const proc = scrape;
   try {
+    fs.mkdir(dir, () => {});
     await retry({ dir, url, progressBar, proc });
   } catch (err) {
     logger.error(err);

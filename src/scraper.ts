@@ -1,78 +1,36 @@
-import puppeteer, { Browser, Page } from "puppeteer-core";
-import fs from "fs";
-import path from "path";
 import { ProgressBar } from "./progressbar";
+import { RetryError } from "./RetryError";
+import { PageObject, launch } from "./PageObject";
 
 export const scrape = async (dir: string, url: string, progressBar: ProgressBar) => {
-  let browser: Browser | undefined;
-  let page: Page | undefined;
+  let pageObject: PageObject | undefined;
   try {
-    browser = await puppeteer.launch({
-      executablePath: process.env.CHROME_PATH,
-      defaultViewport: null,
-      headless: true,
-    });
+    pageObject = await launch();
+    await pageObject.goto(url);
 
-    page = await browser.newPage();
-    await page.goto(url, { waitUntil: "domcontentloaded" });
-
-    const pager = await page.$$("#i2 div div span");
-    const totalPage = await (await pager[1].getProperty("textContent")).jsonValue();
-    if (totalPage !== progressBar.getTotal() && typeof totalPage === "string") {
-      progressBar.setTotal(parseInt(totalPage));
+    const totalPage = await pageObject.getTotalPage();
+    if (totalPage !== progressBar.getTotal()) {
+      progressBar.setTotal(totalPage);
     }
-
-    const isNotEnd = async (page: Page) => {
-      const pager = await page.$$("#i2 div div span");
-      const currentPage = await (await pager[0].getProperty("textContent")).jsonValue();
-      if (typeof currentPage === "string") {
-        progressBar.update(parseInt(currentPage));
-      }
-      return currentPage !== totalPage;
-    };
-
-    fs.mkdir(dir, () => {});
-
+    let currentPage = 0;
     do {
-      const response = await page.waitForResponse(response => {
-        const found = response.url().match(/\.([^.]+?)$/);
-        if (found === null) return false;
-        return ["jpg", "jpeg", "gif", "png"].includes(found[1]);
-      });
-      const fileName = response.url().split("/").pop() || "url_must_be_delimited_by_slash";
-      const buffer = await response.buffer();
-      fs.writeFileSync(path.join(dir, fileName), buffer);
+      await pageObject.saveMedia(dir);
+      currentPage = await pageObject.getCurrentPage();
+      progressBar.update(currentPage);
 
-      await page.waitForSelector("#i3 a");
-      await page.click("#i3 a");
-      await page.waitFor("#i2 div div span");
-
-      await page.waitFor(500); // interval
-    } while (await isNotEnd(page));
+      await pageObject.next();
+      await pageObject.waitFor(500); // interval
+    } while (currentPage !== totalPage);
 
     return true;
   } catch (err) {
-    if (err.name === "TimeoutError" && page) {
-      throw new RetryError(err, page.url());
+    if (err.name === "TimeoutError" && pageObject) {
+      throw new RetryError(err, pageObject.url());
     } else {
-      console.log("next command:", `npm start -- ${dir} ${page?.url()}\n`);
+      console.log("next command:", `npm start -- ${dir} ${pageObject?.url()}\n`);
       throw err;
     }
   } finally {
-    if (browser !== undefined) {
-      await browser.close();
-    }
+    await pageObject?.close();
   }
 };
-
-export class RetryError extends Error {
-  constructor(private err: any, private nextUrl: string) {
-    super(err);
-    this.name = new.target.name;
-    Object.setPrototypeOf(this, RetryError.prototype);
-  }
-
-  getNextUrl() {
-    return this.nextUrl;
-  }
-}
