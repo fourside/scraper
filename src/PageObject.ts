@@ -13,6 +13,7 @@ export async function launch() {
   return new PageObject(browser, page);
 }
 
+const LIMIT_BYTE_SIZE = 1024 * 16;
 export class PageObject {
   constructor(private browser: Browser, private page: Page) {}
 
@@ -36,8 +37,10 @@ export class PageObject {
     const response = await this.page.waitForResponse(this.isMediaResponse);
     const fileName = response.url().split("/").pop() || "url_must_be_delimited_by_slash";
     const buffer = await response.buffer();
-    fs.writeFileSync(path.join(dir, fileName), buffer);
-    logger.debug("saved: [%s]", fileName);
+    if (buffer.length > LIMIT_BYTE_SIZE) {
+      fs.writeFileSync(path.join(dir, fileName), buffer);
+      logger.debug("saved: [%s, size: %s]", fileName, buffer.length);
+    }
   }
 
   async next() {
@@ -63,9 +66,10 @@ export class PageObject {
   }
 
   private isMediaResponse(response: Response) {
+    // logger.debug("response url: [%s]", response.url());
     const found = response.url().match(/\.([^.]+?)$/);
     if (found === null) return false;
-    return ["jpg", "jpeg", "gif", "png"].includes(found[1]);
+    return ["jpg", "jpeg", "gif", "png", "mp4"].includes(found[1]);
   }
 
 }
