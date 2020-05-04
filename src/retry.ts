@@ -39,6 +39,7 @@ export const retry = async ({ dir, url, progressBar, proc, backoffOptions }: Ret
         }
         url = err.getNextUrl();
         const ms = addJitter(computeSleepMsec(options.minMs, options.maxMs, attempt));
+        logger.debug("retry", err);
         logger.info("retry [attempt: %s, nexturl: %s, wait ms: %s]", attempt, url, ms);
         await sleep(ms);
       } else {

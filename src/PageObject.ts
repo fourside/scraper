@@ -1,6 +1,7 @@
 import fs from "fs";
 import path from "path";
 import puppeteer, { Browser, Page, Response } from "puppeteer-core";
+import { fileLogger as logger } from "./logger";
 
 export async function launch() {
   const browser = await puppeteer.launch({
@@ -36,6 +37,7 @@ export class PageObject {
     const fileName = response.url().split("/").pop() || "url_must_be_delimited_by_slash";
     const buffer = await response.buffer();
     fs.writeFileSync(path.join(dir, fileName), buffer);
+    logger.debug("saved: [%s]", fileName);
   }
 
   async next() {

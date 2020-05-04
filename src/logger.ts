@@ -11,7 +11,7 @@ const fileTransporter = new transports.File({
 });
 
 const loggerOptions = {
-  level: "info",
+  level: process.env.DEBUG === "true" ? "debug" : "info",
   format: combine(
     format.splat(),
     timestamp({ format: "YYYY-MM-DD HH:mm:ss", alias: "datetime" }),

@@ -1,6 +1,7 @@
 import { ProgressBar } from "./progressbar";
 import { RetryError } from "./RetryError";
 import { PageObject, launch } from "./PageObject";
+import { fileLogger as logger } from "./logger";
 
 export const scrape = async (dir: string, url: string, progressBar: ProgressBar) => {
   let pageObject: PageObject | undefined;
@@ -17,8 +18,10 @@ export const scrape = async (dir: string, url: string, progressBar: ProgressBar)
       await pageObject.saveMedia(dir);
       currentPage = await pageObject.getCurrentPage();
       progressBar.update(currentPage);
+      logger.debug("current: [%s / %s at %s]", currentPage, totalPage, pageObject.url());
 
       await pageObject.next();
+      logger.debug("next: [%s]", pageObject.url());
       await pageObject.waitFor(500); // interval
     } while (currentPage !== totalPage);
 
