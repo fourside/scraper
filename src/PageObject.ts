@@ -10,6 +10,7 @@ export async function launch(dir: string) {
     headless: true,
   });
   const page = await browser.newPage();
+  await page.setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:85.0) Gecko/20100101 Firefox/85.0");
   return new PageObject(browser, page, dir);
 }
 
@@ -56,7 +57,8 @@ export class PageObject {
   }
 
   async waitFor(msec: number) {
-    await this.page.waitFor(msec);
+    const jitter = Math.floor(Math.random() * 3000);
+    await this.page.waitFor(msec + jitter);
   }
 
   url() {
