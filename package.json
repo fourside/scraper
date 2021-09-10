@@ -17,7 +17,7 @@
     "commander": "^5.1.0",
     "dotenv": "^8.2.0",
     "puppeteer-core": "^3.0.2",
-    "winston": "^3.2.1"
+    "winston": "^3.3.3"
   },
   "engines": {
     "node": "12.x"
