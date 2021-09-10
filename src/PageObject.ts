@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import puppeteer, { Browser, Page, Response } from "puppeteer-core";
+import puppeteer, { Browser, Page, HTTPResponse } from "puppeteer-core";
 import { fileLogger as logger } from "./logger";
 
 export async function launch(dir: string) {
@@ -33,13 +33,21 @@ export class PageObject {
 
   async getTotalPage() {
     const pager = await this.getPager();
-    const totalPage = await (await pager[1].getProperty("textContent")).jsonValue();
+    const totalText = await pager[1].getProperty("textContent");
+    if (totalText === undefined) {
+      throw new Error("");
+    }
+    const totalPage = await (totalText).jsonValue();
     return parseInt(totalPage + "");
   }
 
   async getCurrentPage() {
     const pager = await this.getPager();
-    const currentPage = await (await pager[0].getProperty("textContent")).jsonValue();
+    const currentText = await pager[0].getProperty("textContent");
+    if (currentText === undefined) {
+      throw new Error("");
+    }
+    const currentPage = await (currentText).jsonValue();
     return parseInt(currentPage + "");
   }
 
@@ -69,7 +77,7 @@ export class PageObject {
     this.browser.close();
   }
 
-  private saveImageHandler = async (response: Response) => {
+  private saveImageHandler = async (response: HTTPResponse) => {
     try {
       if (response.request().resourceType() !== "image") {
         return;
