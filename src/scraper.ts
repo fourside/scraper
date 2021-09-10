@@ -26,12 +26,15 @@ export const scrape = async (dir: string, url: string, progressBar: ProgressBar)
 
     return true;
   } catch (err) {
-    if (err.name === "TimeoutError" && pageObject) {
-      throw new RetryError(err, pageObject.url());
-    } else {
-      console.log("next command:", `npm start -- ${dir} ${pageObject?.url()}\n`);
-      throw err;
+    if (err instanceof Error) {
+      if (err.name === "TimeoutError" && pageObject) {
+        throw new RetryError(err, pageObject.url());
+      } else {
+        console.log("next command:", `npm start -- ${dir} ${pageObject?.url()}\n`);
+        throw err;
+      }
     }
+    throw err;
   } finally {
     await pageObject?.close();
   }
