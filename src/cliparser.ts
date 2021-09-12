@@ -15,7 +15,6 @@ export const parse = (argv: string[]) => {
     .on("--help", () => {
       console.log("npm start -- {dir} {targetUrl}");
     })
-    .parse(argv)
-  ;
+    .parse(argv);
   return args;
 };

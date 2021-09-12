@@ -11,11 +11,13 @@ export const end = (past: number): string => {
   const msec = now - past;
   const d = new Date(0);
   d.setMilliseconds(msec);
-  return d.toLocaleTimeString(locale, {
-    timeZone: "UTC",
-    hour12: false,
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-  }).replace(/^24/, "00");
+  return d
+    .toLocaleTimeString(locale, {
+      timeZone: "UTC",
+      hour12: false,
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    })
+    .replace(/^24/, "00");
 };

@@ -17,7 +17,9 @@ const errorPromise = () => {
 
 describe("retry", () => {
   const defaultParams = {
-    dir: "", url: "", progressBar: {} as Bar,
+    dir: "",
+    url: "",
+    progressBar: {} as Bar,
   };
 
   let count = 0;
@@ -48,9 +50,12 @@ describe("retry", () => {
 
   it("should be rejected when throws Error except RetryError", async () => {
     const proc = errorPromise;
-    await assert.rejects(() => {
-      return retry({ ...defaultParams, proc });
-    }, { name: "Error", message: "ordinal error" });
+    await assert.rejects(
+      () => {
+        return retry({ ...defaultParams, proc });
+      },
+      { name: "Error", message: "ordinal error" }
+    );
   });
 
   it("should be rejected when attempt over limit", async () => {
@@ -60,9 +65,11 @@ describe("retry", () => {
       minMs: 10,
       maxMs: 50,
     };
-    await assert.rejects(() => {
-      return retry({ ...defaultParams, proc, backoffOptions });
-    }, { name: "Error", message: "exceeded max retry [3]" });
+    await assert.rejects(
+      () => {
+        return retry({ ...defaultParams, proc, backoffOptions });
+      },
+      { name: "Error", message: "exceeded max retry [3]" }
+    );
   });
-
 });

@@ -16,15 +16,16 @@ export async function launch(dir: string) {
 
 const LIMIT_BYTE_SIZE = 1024 * 16;
 export class PageObject {
-  constructor(private browser: Browser, private page: Page, private dir: string) {
-  }
+  constructor(private browser: Browser, private page: Page, private dir: string) {}
 
   async goto(url: string) {
     try {
       this.page.on("response", this.saveImageHandler);
       await Promise.all([
-        this.page.goto(url, { waitUntil: ["domcontentloaded", "networkidle2"] }),
-        this.page.waitForNavigation({ waitUntil: ["load", "networkidle2"]}),
+        this.page.goto(url, {
+          waitUntil: ["domcontentloaded", "networkidle2"],
+        }),
+        this.page.waitForNavigation({ waitUntil: ["load", "networkidle2"] }),
       ]);
     } catch (err) {
       logger.error("goto error:", err);
@@ -37,7 +38,7 @@ export class PageObject {
     if (totalText === undefined) {
       throw new Error("");
     }
-    const totalPage = await (totalText).jsonValue();
+    const totalPage = await totalText.jsonValue();
     return parseInt(totalPage + "");
   }
 
@@ -47,14 +48,14 @@ export class PageObject {
     if (currentText === undefined) {
       throw new Error("");
     }
-    const currentPage = await (currentText).jsonValue();
+    const currentPage = await currentText.jsonValue();
     return parseInt(currentPage + "");
   }
 
   async next() {
     try {
       await Promise.all([
-        this.page.waitForNavigation({ waitUntil: ["load", "networkidle2"]}),
+        this.page.waitForNavigation({ waitUntil: ["load", "networkidle2"] }),
         this.page.waitForSelector("#i3 a"),
         this.page.click("#i3 a"),
       ]);
@@ -98,5 +99,4 @@ export class PageObject {
   private async getPager() {
     return await this.page.$$("#i2 div div span");
   }
-
 }

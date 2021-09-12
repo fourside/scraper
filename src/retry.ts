@@ -11,12 +11,12 @@ type RetryParams = {
   progressBar: ProgressBar;
   proc: (dir: string, url: string, progressBar: ProgressBar) => Promise<boolean>;
   backoffOptions?: BackoffOptions;
-}
+};
 type BackoffOptions = {
   limit?: number;
   minMs?: number;
   maxMs?: number;
-}
+};
 const defaultOptions = {
   limit: 1000,
   minMs: 2 * 100,

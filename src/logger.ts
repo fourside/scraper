@@ -12,24 +12,15 @@ const fileTransporter = new transports.File({
 
 const loggerOptions = {
   level: process.env.DEBUG === "true" ? "debug" : "info",
-  format: combine(
-    format.splat(),
-    timestamp({ format: "YYYY-MM-DD HH:mm:ss", alias: "datetime" }),
-    customFormat,
-  ),
+  format: combine(format.splat(), timestamp({ format: "YYYY-MM-DD HH:mm:ss", alias: "datetime" }), customFormat),
 };
 
 export const logger = createLogger({
   ...loggerOptions,
-  transports: [
-    new transports.Console(),
-    fileTransporter,
-  ],
+  transports: [new transports.Console(), fileTransporter],
 });
 
 export const fileLogger = createLogger({
   ...loggerOptions,
-  transports: [
-    fileTransporter,
-  ],
+  transports: [fileTransporter],
 });
