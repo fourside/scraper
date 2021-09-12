@@ -2,11 +2,11 @@ import { performance } from "perf_hooks";
 
 const { locale } = Intl.DateTimeFormat().resolvedOptions();
 
-export const start = () => {
+export const start = (): number => {
   return performance.now();
 };
 
-export const end = (past: number) => {
+export const end = (past: number): string => {
   const now = performance.now();
   const msec = now - past;
   const d = new Date(0);
@@ -17,5 +17,5 @@ export const end = (past: number) => {
     hour: "2-digit",
     minute: "2-digit",
     second: "2-digit",
-  });
+  }).replace(/^24/, "00");
 };
