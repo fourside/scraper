@@ -8,7 +8,7 @@
     "test": "mocha",
     "tw": "mocha -w",
     "lint": "eslint src/*.ts",
-    "prepare": "hunky install"
+    "prepare": "husky install"
   },
   "author": "",
   "license": "ISC",
@@ -20,7 +20,7 @@
     "winston": "^3.3.3"
   },
   "engines": {
-    "node": "12.x"
+    "node": "16.x"
   },
   "prettier": {
     "singleQuote": false,
