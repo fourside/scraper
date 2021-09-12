@@ -58,15 +58,15 @@ export class PageObject {
         this.page.waitForSelector("#i3 a"),
         this.page.click("#i3 a"),
       ]);
-      await this.page.waitFor("#i2 div div span");
+      await this.page.waitForSelector("#i2 div div span");
     } catch (err) {
       // ignore navigation timeout error
     }
   }
 
-  async waitFor(msec: number) {
+  async waitForTimeout(msec: number) {
     const jitter = Math.floor(Math.random() * 3000);
-    await this.page.waitFor(msec + jitter);
+    await this.page.waitForTimeout(msec + jitter);
   }
 
   url() {

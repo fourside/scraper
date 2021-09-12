@@ -21,7 +21,7 @@ export const scrape = async (dir: string, url: string, progressBar: ProgressBar)
 
       await pageObject.next();
       logger.debug("next: [%s]", pageObject.url());
-      await pageObject.waitFor(500); // interval
+      await pageObject.waitForTimeout(500); // interval
     } while (currentPage !== totalPage);
 
     return true;
