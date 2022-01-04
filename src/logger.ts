@@ -1,5 +1,5 @@
 import path from "path";
-import { createLogger, format, transports } from "winston";
+import { createLogger, format, transports, LoggerOptions } from "winston";
 
 const { combine, timestamp, printf } = format;
 const customFormat = printf(({ level, message, datetime }) => {
@@ -10,7 +10,7 @@ const fileTransporter = new transports.File({
   filename: path.join(__dirname, "../logs", "scraper.log"),
 });
 
-const loggerOptions = {
+const loggerOptions: LoggerOptions = {
   level: process.env.DEBUG === "true" ? "debug" : "info",
   format: combine(format.splat(), timestamp({ format: "YYYY-MM-DD HH:mm:ss", alias: "datetime" }), customFormat),
 };
